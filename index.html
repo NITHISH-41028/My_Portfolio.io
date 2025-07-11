@@ -1,0 +1,280 @@
+<!--  ==================================================================================
+      NITHISH KUMAR – ONE‑FILE REACTIVE PORTFOLIO 2.0 🚀🔥 (Spck Code Editor Edition)
+      Massive Animations • Apple‑style Glassmorphism • Dark‑mode Toggle • Contact Form
+      ==================================================================================
+      HOW TO USE (same as before)
+      1.  Create **index.html** in Spck / CodePen / any CDN‑friendly editor.
+      2.  Paste EVERYTHING inside this file and save.
+      3.  Drop a square **profile.jpg** alongside, or change the img src.
+      4.  Open preview – no build step required.
+      5.  Customise the **site** object directly in the script.
+
+      ✨  What’s NEW v2.0
+         •   AOS scroll animations on every section & element
+         •   Gradient‑morphing hero background
+         •   Interactive 3‑D tilt on project cards (VanillaTilt)
+         •   Fancy navbar reveal + dark‑mode toggle
+         •   Contact form connected to Formspree (works instantly!)
+         •   Extra flare: floating particles, subtle icon motions
+  ================================================================================== --><!DOCTYPE html><html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Nithish Kumar | Portfolio</title>  <!-- Tailwind (v3 CDN) -->  <script src="https://cdn.tailwindcss.com?plugins=typography,forms"></script>  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: { DEFAULT: '#0A84FF', foreground: '#ffffff' }
+          },
+          fontFamily: {
+            sans: ['SF Pro Display', 'Inter', 'sans-serif']
+          },
+          keyframes: {
+            gradient: {
+              '0%,100%': { 'background-position': '0% 50%' },
+              '50%': { 'background-position': '100% 50%' }
+            }
+          },
+          animation: {
+            gradient: 'gradient 12s ease infinite'
+          }
+        }
+      }
+    }
+  </script>  <!-- AOS (Animate On Scroll) -->  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js" defer></script>  <!-- VanillaTilt for 3‑D hover cards -->  <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.7.0/vanilla-tilt.min.js" defer></script>  <!-- Floating particles background (tsParticles lite) -->  <script src="https://cdn.jsdelivr.net/npm/tsparticles-engine@3/tsparticles.engine.min.js" defer></script>  <script src="https://cdn.jsdelivr.net/npm/tsparticles-basic@3/tsparticles.basic.min.js" defer></script>  <!-- React 17 UMD + Babel for JSX -->  <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin defer></script>  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin defer></script>  <script src="https://unpkg.com/@babel/standalone/babel.min.js" defer></script>  <style>
+    /* smooth gradient background on hero */
+    .gradient-bg {
+      background-image: linear-gradient(270deg,#0A84FF,#4F5FFF,#B620E0,#ff6ec4);
+      background-size: 800% 800%;
+    }
+  </style></head><body class="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 selection:bg-brand selection:text-white">
+  <div id="root"></div>  <!-- =========================  REACT CODE  ========================= -->  <script type="text/babel">
+
+    /* -------------------------  EDIT DATA HERE  ------------------------- */
+    const site = {
+      name: "Nithish Kumar",
+      tagline: "Full‑stack teen developer crafting elegant iOS‑style experiences.",
+      bio: `I’m a 12th‑grade Computer Science student at Venus Matric Hr. Sec. School in Chidambaram, India.\nI love turning ideas into pixel‑perfect products, from frontend delight to backend logic.`,
+      email: "nithish@example.com",
+      github: "https://github.com/your‑username",
+      socials: {
+        linkedin: "https://linkedin.com/in/your‑username",
+        twitter: "https://twitter.com/your‑username"
+      },
+      projects: [
+        {
+          name: "NS Programming Language",
+          description: "A beginner‑friendly, multi‑paradigm language with embedded tags.",
+          stack: ["Rust", "LLVM", "Python"],
+          github: "https://github.com/your‑username/ns‑lang",
+          live: ""
+        },
+        {
+          name: "MusicWave App",
+          description: "Offline + streaming music player with 10‑band EQ.",
+          stack: ["React", "Tailwind", "Node", "MongoDB"],
+          github: "https://github.com/your‑username/musicwave",
+          live: "https://musicwave.vercel.app"
+        }
+      ],
+      skills: ["Python", "C++", "JavaScript / TypeScript", "React", "Tailwind CSS", "Node.js", "Git & GitHub"]
+    }
+
+    /* ----------------------------  HELPERS  ---------------------------- */
+    const Card = ({ children, className = "" }) => (
+      <div className={`rounded-2xl shadow-lg backdrop-blur border border-white/10 bg-white/70 dark:bg-zinc-800/50 p-6 ${className}`}>{children}</div>
+    )
+
+    const useTilt = () => {
+      const ref = React.useRef(null)
+      React.useEffect(() => {
+        if (ref.current && window.VanillaTilt) {
+          VanillaTilt.init(ref.current, { speed: 400, max: 15, glare: true, 'max-glare': 0.1 });
+        }
+      }, [])
+      return ref
+    }
+
+    /* --------------------------  COMPONENTS  -------------------------- */
+
+    function Navbar() {
+      const [open, setOpen] = React.useState(false)
+      const [dark, setDark] = React.useState(window.matchMedia('(prefers-color-scheme: dark)').matches)
+      React.useEffect(() => {
+        document.documentElement.classList.toggle('dark', dark)
+      }, [dark])
+      React.useEffect(() => {
+        const onScroll = () => {
+          const header = document.getElementById('header')
+          if (window.scrollY > 10) {
+            header.classList.add('backdrop-blur', 'bg-white/70', 'dark:bg-zinc-900/70', 'border-b', 'border-zinc-900/10', 'dark:border-zinc-700/40')
+          } else {
+            header.classList.remove('bg-white/70', 'dark:bg-zinc-900/70', 'border-b', 'border-zinc-900/10', 'dark:border-zinc-700/40')
+          }
+        }
+        window.addEventListener('scroll', onScroll)
+        return () => window.removeEventListener('scroll', onScroll)
+      }, [])
+      return (
+        <>
+          <header id="header" className="fixed inset-x-0 top-0 z-50 transition-colors">
+            <div className="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between">
+              <span className="font-semibold tracking-tight">{site.name}</span>
+              <nav className="hidden md:flex gap-6 text-sm">
+                <a href="#projects" className="hover:text-brand" data-aos="fade-down">Projects</a>
+                <a href="#skills"   className="hover:text-brand" data-aos="fade-down" data-aos-delay="50">Skills</a>
+                <a href="#contact"  className="hover:text-brand" data-aos="fade-down" data-aos-delay="100">Contact</a>
+              </nav>
+              <div className="flex items-center gap-2">
+                <button aria-label="Toggle dark mode" onClick={() => setDark(!dark)} className="rounded-xl p-2 hover:bg-zinc-900/5 dark:hover:bg-zinc-100/10" data-aos="zoom-in">
+                  {dark ? '🌞' : '🌙'}
+                </button>
+                <button onClick={() => setOpen(!open)} aria-label="Open menu" className="md:hidden rounded-xl p-2 hover:bg-zinc-900/5 dark:hover:bg-zinc-100/10">☰</button>
+              </div>
+            </div>
+          </header>
+
+          {open && (
+            <div className="fixed inset-0 z-40 bg-black/40" onClick={() => setOpen(false)}>
+              <div className="absolute right-4 top-16 bg-white dark:bg-zinc-800 rounded-2xl p-6 space-y-4 shadow-lg" onClick={e => e.stopPropagation()} data-aos="zoom-in">
+                <a href="#projects" onClick={() => setOpen(false)} className="block">Projects</a>
+                <a href="#skills"   onClick={() => setOpen(false)} className="block">Skills</a>
+                <a href="#contact"  onClick={() => setOpen(false)} className="block">Contact</a>
+              </div>
+            </div>
+          )}
+        </>
+      )
+    }
+
+    function Hero() {
+      return (
+        <section id="hero" className="relative flex flex-col items-center justify-center min-h-screen text-center px-4 overflow-hidden gradient-bg animate-gradient" data-aos="fade">
+          {/* Particles container */}
+          <div id="tsparticles" className="absolute inset-0 -z-10"></div>
+          <img src="profile.jpg" alt="Profile" className="w-32 h-32 rounded-full object-cover mb-6 shadow-xl border-4 border-white/50" data-aos="zoom-in" />
+          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-white drop-shadow-lg" data-aos="fade-up" data-aos-delay="200">{site.name}</h1>
+          <p className="mt-4 max-w-2xl text-lg md:text-2xl text-white/90" data-aos="fade-up" data-aos-delay="400">{site.tagline}</p>
+          <a href="#projects" className="mt-10 inline-block bg-white text-brand font-medium py-3 px-8 rounded-full shadow hover:shadow-lg" data-aos="zoom-in" data-aos-delay="600">See my work</a>
+        </section>
+      )
+    }
+
+    function About() {
+      return (
+        <section id="about" className="py-32 px-4" data-aos="fade-right">
+          <div className="mx-auto max-w-4xl">
+            <h2 className="text-4xl font-bold mb-8">About me</h2>
+            <Card className="leading-relaxed whitespace-pre-line text-lg">{site.bio}</Card>
+          </div>
+        </section>
+      )
+    }
+
+    function Projects() {
+      return (
+        <section id="projects" className="py-32 px-4 bg-zinc-50 dark:bg-zinc-800/40">
+          <div className="mx-auto max-w-5xl">
+            <h2 className="text-4xl font-bold mb-12 text-center" data-aos="fade-up">Projects</h2>
+            <div className="grid gap-10 md:grid-cols-2">
+              {site.projects.map((project, i) => {
+                const tiltRef = useTilt()
+                return (
+                  <div key={project.name} ref={tiltRef} data-aos="flip-left" data-aos-delay={i * 100}>
+                    <Card className="h-full flex flex-col">
+                      <h3 className="text-2xl font-semibold mb-2">{project.name}</h3>
+                      <p className="text-zinc-600 dark:text-zinc-400 flex-grow mb-4">{project.description}</p>
+                      <div className="flex gap-2 flex-wrap text-sm mb-4">
+                        {project.stack.map(tech => <span key={tech} className="bg-brand/10 text-brand rounded-full px-3 py-1">{tech}</span>)}
+                      </div>
+                      <div className="mt-auto flex gap-4 text-sm font-medium">
+                        {project.live && <a href={project.live} className="hover:text-brand" target="_blank" rel="noreferrer">Live ↗</a>}
+                        <a href={project.github} className="hover:text-brand" target="_blank" rel="noreferrer">Code ↗</a>
+                      </div>
+                    </Card>
+                  </div>
+                )})}
+            </div>
+          </div>
+        </section>
+      )
+    }
+
+    function Skills() {
+      return (
+        <section id="skills" className="py-32 px-4" data-aos="fade-left">
+          <div className="mx-auto max-w-5xl text-center">
+            <h2 className="text-4xl font-bold mb-12">Skills</h2>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+              {site.skills.map((skill, i) => (
+                <Card key={skill} className="text-lg font-medium py-5" data-aos="zoom-in" data-aos-delay={i * 50}>{skill}</Card>
+              ))}
+            </div>
+          </div>
+        </section>
+      )
+    }
+
+    function Contact() {
+      return (
+        <section id="contact" className="py-32 px-4 bg-zinc-50 dark:bg-zinc-800/40" data-aos="fade-up">
+          <div className="mx-auto max-w-xl text-center">
+            <h2 className="text-4xl font-bold mb-8">Get in touch</h2>
+            <Card className="space-y-6">
+              <form action="https://formspree.io/f/myyvlqay" method="POST" className="space-y-4 text-left">
+                <input type="text" name="name" placeholder="Name" required className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-transparent px-4 py-3" />
+                <input type="email" name="email" placeholder="Email" required className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-transparent px-4 py-3" />
+                <textarea name="message" placeholder="Message" rows="4" required className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-transparent px-4 py-3"></textarea><button type="submit" className="w-full bg-brand text-white py-3 rounded-lg hover:brightness-110 tracking-wide">Send →</button>
+          </form>
+          <div className="flex justify-center gap-6 text-xl">
+            <a href={`mailto:${site.email}`} className="hover:text-brand" aria-label="Email">📧</a>
+            <a href={site.github} target="_blank" rel="noreferrer" className="hover:text-brand" aria-label="GitHub">💻</a>
+            {site.socials.linkedin && <a href={site.socials.linkedin} target="_blank" rel="noreferrer" className="hover:text-brand" aria-label="LinkedIn">🔗</a>}
+            {site.socials.twitter  && <a href={site.socials.twitter}  target="_blank" rel="noreferrer" className="hover:text-brand" aria-label="Twitter">🐦</a>}
+          </div>
+        </Card>
+      </div>
+    </section>
+  )
+}
+
+function App() {
+  React.useEffect(() => { AOS.init({ once: true, duration: 800, easing: 'ease-out-cubic' }) }, [])
+  React.useEffect(() => {
+    /* init particles */
+    tsparticles.load('tsparticles', {
+      particles: {
+        number: { value: 30 },
+        size: { value: 3 },
+        move: { speed: 0.6 },
+        opacity: { value: 0.3 },
+        links: { enable: true, opacity: 0.2 }
+      }
+    })
+  }, [])
+  return (
+    <>
+      <Navbar />
+      <main className="isolate">
+        <Hero />
+        <About />
+        <Projects />
+        <Skills />
+        <Contact />
+      </main>
+      <footer className="py-10 text-center text-sm text-zinc-500 dark:text-zinc-400" data-aos="fade">
+        © {new Date().getFullYear()} Nithish Kumar. Built with ❤️ & React.
+      </footer>
+    </>
+  )
+}
+
+/* ---------------------------  RENDER  --------------------------- */
+ReactDOM.render(<App />, document.getElementById('root'))
+
+  </script>
+</body>
+</html>
